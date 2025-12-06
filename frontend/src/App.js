@@ -2,11 +2,11 @@ import React from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 
 import Navbar from "./components/Navbar";
-import Home from "./pages/Home";
 import BookAvailability from "./pages/BookAvailability";
-import WaitlistPage from "./pages/WaitlistPage";
-import FeedbackPage from "./pages/FeedbackPage";
-import HelpPage from "./pages/HelpPage";
+import ReserveBook from './pages/ReserveBook';
+import WaitlistStatus from "./pages/WaitlistStatus";
+import Feedback from "./pages/Feedback";
+import Help from "./pages/Help";
 
 function App() {
   return (
@@ -14,11 +14,11 @@ function App() {
       <Navbar />
 
       <Routes>
-        <Route path="/" element={<Home />} />
         <Route path="/availability" element={<BookAvailability />} />
-        <Route path="/waitlist" element={<WaitlistPage />} />
-        <Route path="/feedback" element={<FeedbackPage />} />
-        <Route path="/help" element={<HelpPage />} />
+        <Route path="/reserve" element={<ReserveBook />} />
+        <Route path="/waitlist" element={<WaitlistStatus />} />
+        <Route path="/feedback" element={<Feedback />} />
+        <Route path="/help" element={<Help />} />
       </Routes>
     </Router>
   );
