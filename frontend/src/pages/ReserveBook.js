@@ -1,44 +1,43 @@
+// src/pages/ReserveBook.js
 import React, { useState } from "react";
+import { API_BASE_URL } from "../api";
 
 function ReserveBook() {
   const [title, setTitle] = useState("");
   const [email, setEmail] = useState("");
-  const [responseMsg, setResponseMsg] = useState(null);
+  const [message, setMessage] = useState("");
 
   const reserveBook = async () => {
-    const res = await fetch("http://localhost:3000/books/reserve", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ title, email })
-    });
-
-    const data = await res.json();
-    setResponseMsg(data.message);
+    try {
+      const response = await fetch(`${API_BASE_URL}/books/reserve`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ title, email }),
+      });
+      const data = await response.json();
+      setMessage(data.message);
+    } catch (err) {
+      setMessage("Error reserving book");
+    }
   };
 
   return (
     <div>
       <h2>Reserve a Book</h2>
-
-      <input 
+      <input
         type="text"
-        placeholder="Book title"
+        placeholder="Book Title"
         value={title}
-        onChange={e => setTitle(e.target.value)}
+        onChange={(e) => setTitle(e.target.value)}
       />
-      <br />
-
-      <input 
+      <input
         type="email"
-        placeholder="Your email"
+        placeholder="Your Email"
         value={email}
-        onChange={e => setEmail(e.target.value)}
+        onChange={(e) => setEmail(e.target.value)}
       />
-      <br />
-
       <button onClick={reserveBook}>Reserve</button>
-
-      {responseMsg && <p>{responseMsg}</p>}
+      {message && <p>{message}</p>}
     </div>
   );
 }

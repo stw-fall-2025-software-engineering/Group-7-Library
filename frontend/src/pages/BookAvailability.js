@@ -1,53 +1,46 @@
+// src/pages/BookAvailability.js
 import React, { useState } from "react";
+import { API_BASE_URL } from "../api";
 
 function BookAvailability() {
   const [title, setTitle] = useState("");
-  const [result, setResult] = useState(null);
+  const [book, setBook] = useState(null);
+  const [error, setError] = useState("");
 
   const checkAvailability = async () => {
-    if (!title) return;
-
     try {
-      const response = await fetch(
-        `http://localhost:3000/books/availability/${encodeURIComponent(title)}`
-      );
-
+      const response = await fetch(`${API_BASE_URL}/books/availability/${encodeURIComponent(title)}`);
       if (!response.ok) throw new Error("Book not found");
-
       const data = await response.json();
-      setResult(data);
-    } catch (error) {
-      setResult({ error: "Book not found" });
+      setBook(data);
+      setError("");
+    } catch (err) {
+      setBook(null);
+      setError(err.message);
     }
   };
 
   return (
     <div>
       <h2>Check Book Availability</h2>
-
-      <input 
+      <input
         type="text"
         placeholder="Enter book title"
         value={title}
-        onChange={e => setTitle(e.target.value)}
+        onChange={(e) => setTitle(e.target.value)}
       />
+      <button onClick={checkAvailability}>Check</button>
 
-      <button onClick={checkAvailability}>Search</button>
+      {error && <p style={{ color: "red" }}>{error}</p>}
 
-      {result && (
-        <div style={{ marginTop: "20px" }}>
-          {result.error ? (
-            <p>{result.error}</p>
-          ) : (
-            <div>
-              <p><strong>Title:</strong> {result.title}</p>
-              <p><strong>Author:</strong> {result.author}</p>
-              <p><strong>Total Copies:</strong> {result.total_copies}</p>
-              <p><strong>Available:</strong> {result.available}</p>
-              <p><strong>Waitlist:</strong> {result.waitlist_length} users</p>
-              <p><strong>Status:</strong> {result.status}</p>
-            </div>
-          )}
+      {book && (
+        <div>
+          <h3>{book.title}</h3>
+          <p>Author: {book.author}</p>
+          <p>Total Copies: {book.total_copies}</p>
+          <p>Available: {book.available}</p>
+          <p>Waitlist Length: {book.waitlist_length}</p>
+          <p>Status: {book.status}</p>
         </div>
       )}
     </div>

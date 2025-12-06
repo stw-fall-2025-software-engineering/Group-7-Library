@@ -1,44 +1,46 @@
+// src/pages/WaitlistStatus.js
 import React, { useState } from "react";
+import { API_BASE_URL } from "../api";
 
 function WaitlistStatus() {
   const [title, setTitle] = useState("");
-  const [waitlist, setWaitlist] = useState(null);
+  const [waitlist, setWaitlist] = useState([]);
+  const [error, setError] = useState("");
 
-  const loadWaitlist = async () => {
+  const fetchWaitlist = async () => {
     try {
-      const res = await fetch(
-        `http://localhost:3000/books/waitlist/${encodeURIComponent(title)}`
-      );
-      const data = await res.json();
-      setWaitlist(data);
+      const response = await fetch(`${API_BASE_URL}/books/waitlist/${encodeURIComponent(title)}`);
+      if (!response.ok) throw new Error("Book not found");
+      const data = await response.json();
+      setWaitlist(data.waitlist);
+      setError("");
     } catch (err) {
-      setWaitlist({ error: "Error loading waitlist" });
+      setWaitlist([]);
+      setError(err.message);
     }
   };
 
   return (
     <div>
-      <h2>Check Waitlist</h2>
-
+      <h2>Waitlist Status</h2>
       <input
         type="text"
-        placeholder="Enter book title"
+        placeholder="Book Title"
         value={title}
-        onChange={e => setTitle(e.target.value)}
+        onChange={(e) => setTitle(e.target.value)}
       />
-      <button onClick={loadWaitlist}>Check</button>
+      <button onClick={fetchWaitlist}>Check Waitlist</button>
 
-      {waitlist && (
-        <div>
-          <h3>Waitlist for: {waitlist.title}</h3>
-          <ul>
-            {waitlist.waitlist?.length === 0 ? (
-              <p>No users on waitlist</p>
-            ) : (
-              waitlist.waitlist.map((email, i) => <li key={i}>{email}</li>)
-            )}
-          </ul>
-        </div>
+      {error && <p style={{ color: "red" }}>{error}</p>}
+
+      {waitlist.length > 0 ? (
+        <ul>
+          {waitlist.map((email, index) => (
+            <li key={index}>{email}</li>
+          ))}
+        </ul>
+      ) : (
+        <p>No one is currently on the waitlist.</p>
       )}
     </div>
   );
