@@ -1,0 +1,66 @@
+<!-- feedback.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Smart Library - Feedback</title>
+  <link rel="stylesheet" href="assets/styles.css" />
+  <script defer src="assets/app.js"></script>
+</head>
+<body>
+  <header class="header">
+    <h1>Smart Library Feedback</h1>
+    <nav>
+      <a href="index.html">Home</a>
+      <a href="help.html">Help</a>
+      <a href="feedback.html" class="active">Feedback</a>
+    </nav>
+  </header>
+
+  <main class="container">
+    <section class="card">
+      <h2>Tell us how we’re doing</h2>
+      <p>Your feedback helps us improve the Smart Library experience for everyone.</p>
+
+      <form id="feedbackForm" class="form">
+        <label>
+          Name (optional)
+          <input type="text" name="name" class="input" placeholder="Your name" />
+        </label>
+
+        <label>
+          Overall experience <span class="required">*</span>
+          <select name="rating" class="input" required>
+            <option value="">Choose a rating</option>
+            <option value="5">⭐⭐⭐⭐⭐ Great</option>
+            <option value="4">⭐⭐⭐⭐ Good</option>
+            <option value="3">⭐⭐⭐ Okay</option>
+            <option value="2">⭐⭐ Poor</option>
+            <option value="1">⭐ Very poor</option>
+          </select>
+        </label>
+
+        <label>
+          Comments <span class="required">*</span>
+          <textarea
+            name="comments"
+            class="input"
+            rows="4"
+            placeholder="What worked well? What needs improvement?"
+            required
+          ></textarea>
+        </label>
+
+        <button type="submit" class="btn">Submit Feedback</button>
+        <p id="feedbackFormMessage" class="form-message"></p>
+      </form>
+    </section>
+
+    <section class="card">
+      <h2>Recent Feedback (Prototype)</h2>
+      <p>This section shows the last few feedback entries stored in your browser.</p>
+      <ul id="feedbackList" class="feedback-list"></ul>
+    </section>
+  </main>
+</body>
+</html>
