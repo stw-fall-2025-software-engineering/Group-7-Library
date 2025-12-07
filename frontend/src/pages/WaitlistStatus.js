@@ -1,47 +1,75 @@
 // src/pages/WaitlistStatus.js
-import React, { useState } from "react";
-import { API_BASE_URL } from "../api";
+import React, { useState, useEffect } from "react";
 
 function WaitlistStatus() {
-  const [title, setTitle] = useState("");
-  const [waitlist, setWaitlist] = useState([]);
-  const [error, setError] = useState("");
+  const [email, setEmail] = useState("");
+  const [bookTitle, setBookTitle] = useState("");
+  const [message, setMessage] = useState("");
+  const [books, setBooks] = useState([]);
 
-  const fetchWaitlist = async () => {
+  // Fetch book titles from backend dynamically
+  useEffect(() => {
+    const fetchBooks = async () => {
+      try {
+        const res = await fetch("http://localhost:5000/books");
+        const data = await res.json();
+        setBooks(data.titles);
+      } catch (err) {
+        console.error("Failed to fetch books:", err);
+      }
+    };
+    fetchBooks();
+  }, []);
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    if (!email || !bookTitle) {
+      setMessage("Please select a book and enter your email.");
+      return;
+    }
+
     try {
-      const response = await fetch(`${API_BASE_URL}/books/waitlist/${encodeURIComponent(title)}`);
-      if (!response.ok) throw new Error("Book not found");
-      const data = await response.json();
-      setWaitlist(data.waitlist);
-      setError("");
+      const res = await fetch("http://localhost:5000/books/reserve", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ title: bookTitle, email })
+      });
+
+      const data = await res.json();
+      setMessage(data.message);
     } catch (err) {
-      setWaitlist([]);
-      setError(err.message);
+      console.error(err);
+      setMessage("Error connecting to server.");
     }
   };
 
   return (
-    <div>
-      <h2>Waitlist Status</h2>
-      <input
-        type="text"
-        placeholder="Book Title"
-        value={title}
-        onChange={(e) => setTitle(e.target.value)}
-      />
-      <button onClick={fetchWaitlist}>Check Waitlist</button>
-
-      {error && <p style={{ color: "red" }}>{error}</p>}
-
-      {waitlist.length > 0 ? (
-        <ul>
-          {waitlist.map((email, index) => (
-            <li key={index}>{email}</li>
-          ))}
-        </ul>
-      ) : (
-        <p>No one is currently on the waitlist.</p>
-      )}
+    <div style={{ padding: "20px" }}>
+      <h2>Join the Waitlist</h2>
+      <form onSubmit={handleSubmit}>
+        <div style={{ marginBottom: "10px" }}>
+          <label>Book: </label>
+          <select value={bookTitle} onChange={(e) => setBookTitle(e.target.value)} required>
+            <option value="">-- Select a Book --</option>
+            {books.map((title, idx) => (
+              <option key={idx} value={title}>{title}</option>
+            ))}
+          </select>
+        </div>
+        <div style={{ marginBottom: "10px" }}>
+          <label>Email: </label>
+          <input
+            type="email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            placeholder="you@example.com"
+            required
+          />
+        </div>
+        <button type="submit">Join Waitlist</button>
+      </form>
+      {message && <p style={{ marginTop: "10px" }}>{message}</p>}
     </div>
   );
 }
