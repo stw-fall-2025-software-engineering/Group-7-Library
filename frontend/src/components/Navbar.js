@@ -16,7 +16,7 @@ export default function Navbar() {
 
         {/* Navigation Links */}
         <li>
-          <Link to="/">Book Availability</Link>
+          <Link to="/availability">Book Availability</Link>
         </li>
         <li>
           <Link to="/waitlist">Waitlist</Link>
