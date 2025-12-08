@@ -1,77 +1,86 @@
-// src/pages/WaitlistStatus.js
 import React, { useState, useEffect } from "react";
 
-function WaitlistStatus() {
-  const [email, setEmail] = useState("");
-  const [bookTitle, setBookTitle] = useState("");
-  const [message, setMessage] = useState("");
+const WaitlistStatus = () => {
   const [books, setBooks] = useState([]);
+  const [selectedBook, setSelectedBook] = useState("");
+  const [email, setEmail] = useState("");
+  const [waitlist, setWaitlist] = useState([]);
 
-  // Fetch book titles from backend dynamically
   useEffect(() => {
-    const fetchBooks = async () => {
-      try {
-        const res = await fetch("http://localhost:5000/books");
-        const data = await res.json();
-        setBooks(data.titles);
-      } catch (err) {
-        console.error("Failed to fetch books:", err);
-      }
-    };
-    fetchBooks();
+    fetch("http://localhost:5000/books")
+      .then(res => res.json())
+      .then(data => setBooks(data.titles));
   }, []);
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
+  // Fetch waitlist automatically whenever book changes
+  useEffect(() => {
+    if (!selectedBook) return;
+    fetchWaitlist();
+  }, [selectedBook]);
 
-    if (!email || !bookTitle) {
-      setMessage("Please select a book and enter your email.");
-      return;
-    }
+  const fetchWaitlist = async () => {
+    const res = await fetch(`http://localhost:5000/api/waitlist/${selectedBook}`);
+    const data = await res.json();
+    setWaitlist(data.waitlist || []);
+  };
 
-    try {
-      const res = await fetch("http://localhost:5000/books/reserve", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ title: bookTitle, email })
-      });
+  const joinWaitlist = async () => {
+    if (!selectedBook || !email) return alert("Select a book and enter email.");
 
-      const data = await res.json();
-      setMessage(data.message);
-    } catch (err) {
-      console.error(err);
-      setMessage("Error connecting to server.");
-    }
+    const res = await fetch("http://localhost:5000/books/reserve", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ title: selectedBook, email })
+    });
+
+    const data = await res.json();
+    alert(data.message);
+
+    // Refresh list after adding new person
+    fetchWaitlist();
   };
 
   return (
-    <div style={{ padding: "20px" }}>
-      <h2>Join the Waitlist</h2>
-      <form onSubmit={handleSubmit}>
-        <div style={{ marginBottom: "10px" }}>
-          <label>Book: </label>
-          <select value={bookTitle} onChange={(e) => setBookTitle(e.target.value)} required>
-            <option value="">-- Select a Book --</option>
-            {books.map((title, idx) => (
-              <option key={idx} value={title}>{title}</option>
-            ))}
-          </select>
+    <div>
+      <h2>📘 Join or View Waitlist</h2>
+
+      <select value={selectedBook} onChange={e => setSelectedBook(e.target.value)}>
+        <option value="">Select a book</option>
+        {books.map(b => <option key={b}>{b}</option>)}
+      </select>
+
+      <br /><br />
+
+      <input 
+        type="email" 
+        placeholder="Enter your email"
+        value={email}
+        onChange={e => setEmail(e.target.value)}
+      />
+
+      <br /><br />
+
+      <button onClick={joinWaitlist}>Join Waitlist</button>
+
+      <br /><br />
+      
+      {/* Visible Waitlist Section */}
+      {selectedBook && (
+        <div>
+          <h3>📋 Current Waitlist for "{selectedBook}"</h3>
+          {waitlist.length > 0 ? (
+            <ul>
+              {waitlist.map((person, index) => (
+                <li key={index}>{person}</li>
+              ))}
+            </ul>
+          ) : (
+            <p>✔ No one is waiting right now.</p>
+          )}
         </div>
-        <div style={{ marginBottom: "10px" }}>
-          <label>Email: </label>
-          <input
-            type="email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            placeholder="you@example.com"
-            required
-          />
-        </div>
-        <button type="submit">Join Waitlist</button>
-      </form>
-      {message && <p style={{ marginTop: "10px" }}>{message}</p>}
+      )}
     </div>
   );
-}
+};
 
 export default WaitlistStatus;
