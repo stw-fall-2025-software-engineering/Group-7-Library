@@ -7,6 +7,7 @@ import Navbar from "./components/Navbar";
 import BookAvailability from "./pages/BookAvailability";
 import ReserveBook from "./pages/ReserveBook";
 import WaitlistStatus from "./pages/WaitlistStatus";
+import Notifications from "./pages/Notifications";
 import Feedback from "./pages/Feedback";
 import Help from "./pages/Help";
 
@@ -20,6 +21,7 @@ function App() {
             <Route path="/availability" element={<BookAvailability />} />
             <Route path="/reserve" element={<ReserveBook />} />
             <Route path="/waitlist" element={<WaitlistStatus />} />
+            <Route path="/notifications" element={<Notifications />} />
             <Route path="/feedback" element={<Feedback />} />
             <Route path="/help" element={<Help />} />
           </Routes>
