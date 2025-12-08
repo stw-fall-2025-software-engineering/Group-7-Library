@@ -16,9 +16,10 @@ function App() {
         <div className="container">
           <Routes>
             <Route path="/" element={<BookAvailability />} />
+            <Route path="/availability" element={<BookAvailability />} />
             <Route path="/reserve" element={<ReserveBook />} />
             <Route path="/waitlist" element={<WaitlistStatus />} />
-            <Route path="/return" element={<ReturnBook />} /> {/* New */}
+            <Route path="/return" element={<ReturnBook />} />
             <Route path="/feedback" element={<Feedback />} />
             <Route path="/help" element={<Help />} />
           </Routes>
