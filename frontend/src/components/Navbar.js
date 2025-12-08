@@ -19,6 +19,9 @@ export default function Navbar() {
           <Link to="/availability">Book Availability</Link>
         </li>
         <li>
+          <Link to="/reserve">Reserve Book</Link>
+        </li>
+        <li>
           <Link to="/waitlist">Waitlist</Link>
         </li>
         <li>

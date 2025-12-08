@@ -17,7 +17,7 @@ function App() {
         <Navbar />
         <div className="container">
           <Routes>
-            <Route path="/" element={<BookAvailability />} />
+            <Route path="/availability" element={<BookAvailability />} />
             <Route path="/reserve" element={<ReserveBook />} />
             <Route path="/waitlist" element={<WaitlistStatus />} />
             <Route path="/feedback" element={<Feedback />} />
